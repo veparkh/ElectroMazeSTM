@@ -1,10 +1,13 @@
 # C source files
 PROJECT_CSRC 	= main.c\
-				src/serial.c
+				src/serial.c\
+				uart/src/uart.c
+				
 # C++ source files
 PROJECT_CPPSRC 	= 
 # Directories to search headers in
 PROJECT_INCDIR	= include\
+				uart\include
 # Additional libraries
 PROJECT_LIBS	=
 # Compiler options

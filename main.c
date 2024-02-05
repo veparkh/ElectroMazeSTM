@@ -2,7 +2,7 @@
 #include "hal.h"
 #include <chprintf.h>
 #include <serial.h>
-
+#include "uart.h"
 
 int main(void) {
 
@@ -12,10 +12,12 @@ int main(void) {
     debug_stream_init();
     dbgprintf("Test\n\r");
     uint16_t i = 0;
+    //uartInit();
     while (true) {
-        chThdSleepMilliseconds(1000);
-        dbgprintf("fine %d\n\r", i);
-        palToggleLine(LINE_LED2);
-        i++;
+    	//msg_t res = uartPut(0b10100101);
+    	//dbgprintf("%d\n\r",res);
+    	chThdSleepMilliseconds(3000);
+
     }
 }
+
