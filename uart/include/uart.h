@@ -13,6 +13,10 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <string.h>
+#include "serial.h"
+
+
+void uartWorker(void *arg);
 
 void uartInit(void);
 
