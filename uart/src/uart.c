@@ -69,7 +69,7 @@ THD_FUNCTION(uartWorker, arq){
     		continue;
     	float positions[2]={0x0fffffff,-90.0};
     	while (true){
-    		readByteCount = uartReadTimeout((uint8_t*)positions, 8, 800);
+    		readByteCount = uartReadTimeout((uint8_t*)positions, 8, 2000);
     		dbgprintf("readBytes:%d\r\n",readByteCount);
     		if (readByteCount!=8)
     			break;

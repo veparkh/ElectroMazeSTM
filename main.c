@@ -23,6 +23,7 @@ int main(void) {
         	dbgprintf("position %f   %f\r\n",positionArray[0], positionArray[1]);
     	}
     	dbgprintf("alive\r\n");
+    	chThdSleepMilliseconds(1000);
     }
 }
 
