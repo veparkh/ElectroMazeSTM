@@ -1,12 +1,22 @@
 # C source files
 PROJECT_CSRC 	= main.c\
 				src/serial.c\
-				engine/src/engine.c
+				engine/src/engine.c\
+				uart/src/uart.c\
+				positionSensor/src/Sensors.c\
+				positionSensor/src/SensorsThread.c\
+				positionSensor/src/FusionAhrs.c\
+				positionSensor/src/FusionCompass.c\
+				positionSensor/src/FusionOffset.c
+				
 # C++ source files
 PROJECT_CPPSRC 	= 
 # Directories to search headers in
 PROJECT_INCDIR	= include\
-					engine/include
+					    engine/include\
+				      uart\include\
+				      positionSensor\include
+
 # Additional libraries
 PROJECT_LIBS	=
 # Compiler options
