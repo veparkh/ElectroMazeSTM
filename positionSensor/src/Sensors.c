@@ -6,7 +6,7 @@
  */
 
 
-#include <Sensors.h>
+#include "Sensors.h"
 
 static I2CDriver *i2c1 = &I2CD1;
 
@@ -30,20 +30,22 @@ static const I2CConfig i2c1_conf = {
  .cr2 = 0
 };
 
+
+
 //TODO() откалибровать компас
 const float compassCalibrationBias[3] = { 567.893, -825.35, 1061.436 };
 
-const float compassCalibrationMatrix[3][3] = { { 1.909, 0.082, 0.004 },
-                                               { 0.049, 1.942, -0.235 },
-                                               { -0.003, 0.008, 1.944 } };
+const float compassCalibrationMatrix[3][3] = { { 1.909, 0.082, 0.004 }, { 0.049, 1.942, -0.235 }, { -0.003, 0.008, 1.944 } };
 
 
 void SensorInit(void){
 	i2cStart(i2c1, &i2c1_conf);
-    palSetLineMode(PAL_LINE(GPIOB, 8), PAL_MODE_ALTERNATE(4)|PAL_STM32_OTYPE_OPENDRAIN );
-    palSetLineMode(PAL_LINE(GPIOB, 9), PAL_MODE_ALTERNATE(4)|PAL_STM32_OTYPE_OPENDRAIN );
+	palSetLineMode(PAL_LINE(GPIOB, 8), PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN );
+	palSetLineMode(PAL_LINE(GPIOB, 9), PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN );
 }
-msg_t SensorGetData(uint16_t (*data)[3], uint16_t tim_ms){
+
+
+msg_t SensorGetData(int16_t (*data)[3], uint16_t tim_ms){
 	msg_t msg = 0;
 	uint8_t tx[1]={accelerometer.dataStartAddress};
 
@@ -52,14 +54,12 @@ msg_t SensorGetData(uint16_t (*data)[3], uint16_t tim_ms){
 	if(msg!=MSG_OK)
 		return -1;
 
-	uint8_t d[6];
 	tx[0] = gyroscope.dataStartAddress;
-	msg = i2cMasterTransmitTimeout(i2c1, gyroscope.address, tx, 1, /*(uint8_t*)&data[1][0]*/d, gyroscope.dataBytesCount, chTimeMS2I(tim_ms));
-	memcpy((uint8_t*)&data[1][0],d,6);
-	dbgprintf("%d\t%d\t%d\t%d\t%d\t%d\r\n", *(d + 0), *(d + 1), *(d + 2), *(d + 3), *(d + 4), *(d + 5));
+	msg = i2cMasterTransmitTimeout(i2c1, gyroscope.address, tx, 1, (uint8_t*)&data[1][0], gyroscope.dataBytesCount, chTimeMS2I(tim_ms));
 	//dbgprintf("%d\t%d\t%d\t%d\t%d\t%d\r\n", *((uint8_t*)&data[1][0] + 0), *((uint8_t*)&data[0][0] + 1), *((uint8_t*)&data[1][0] + 2), *((uint8_t*)&data[1][0] + 3), *((uint8_t*)&data[1][0] + 4), *((uint8_t*)data[1][0] + 5));
 	if(msg!=MSG_OK)
 		return -2;
+
 	tx[0] = magnetometer.dataStartAddress;
 	msg = i2cMasterTransmitTimeout(i2c1, magnetometer.address, tx, 1, (uint8_t*)&data[2][0], magnetometer.dataBytesCount, chTimeMS2I(tim_ms));
 	if(msg!=MSG_OK)
@@ -93,30 +93,31 @@ int8_t SensorConfigure(void){
 	if (res!=0)
 		return -1;
 	//Гироскоп
-	uint8_t gyrotx[] = {0x20,0b10011111};//нормальный режим питания, 400 Герц CR1
+	uint8_t gyrotx[] = {0x20,0b10011111,0x24,0b00010010,0x21,0b00010011};//нормальный режим питания, 400 Герц CR1
 	res = i2cMasterTransmitTimeout(i2c1,gyroscope.address,gyrotx,2,NULL, 0, 1000);
 	if (res!=0)
 		return -1;
 	//Магнитометр
-	uint8_t magntx[] = {0x20,0b00100010};//Включения X и Y, 500 Герц CR1
-	uint8_t magntx2[] = {0x22,0b00000000};// Включение работы CR3
-	uint8_t magntx3[] = {0x23,0b00000100};// Включение Z CR4
+	uint8_t magntx[] = {0x20,0b00100010,//Включения X и Y, 500 Герц CR1
+						0x22,0b00000000,// Включение работы CR3
+						0x23,0b00000100};// Включение Z CR4
 	res = i2cMasterTransmitTimeout(i2c1, magnetometer.address, magntx, 2, NULL, 0, 1000);
 	if (res!=0)
 		return -1;
-	res = i2cMasterTransmitTimeout(i2c1,magnetometer.address,magntx2,2,NULL,0,1000);
+	res = i2cMasterTransmitTimeout(i2c1,magnetometer.address,(uint8_t*)&magntx[2],2,NULL,0,1000);
 	if (res!=0)
 		return -1;
-	res = i2cMasterTransmitTimeout(i2c1,magnetometer.address,magntx3,2,NULL,0,1000);
+	res = i2cMasterTransmitTimeout(i2c1,magnetometer.address, (uint8_t*)&magntx[4], 2, NULL, 0, 1000);
 	if (res!=0)
 		return -1;
 	return 0;
 }
 
-
 i2cflags_t SensorGetErrors(void){
 	return i2cGetErrors(i2c1);
 }
+
+
 
 
 

@@ -15,14 +15,17 @@
 #include <string.h>
 #include "serial.h"
 
-
 void SensorInit(void);
 
-msg_t SensorGetData(uint16_t (*data)[3], uint16_t tim_ms);
+void SensorThreadInit(void);
+
+msg_t SensorGetData(int16_t (*data)[3], uint16_t tim_ms);
 
 int8_t SensorCheckWhoAmI(void);
 
 int8_t SensorConfigure(void);
 
 i2cflags_t SensorGetErrors(void);
+
+//void anglesHandler(void *p);
 #endif /* GYROSCOPE_INCLUDE_POSITIONSENSOR_H_ */

@@ -3,6 +3,7 @@ PROJECT_CSRC 	= main.c\
 				src/serial.c\
 				uart/src/uart.c\
 				positionSensor/src/Sensors.c\
+				positionSensor/src/SensorsThread.c\
 				positionSensor/src/FusionAhrs.c\
 				positionSensor/src/FusionCompass.c\
 				positionSensor/src/FusionOffset.c
