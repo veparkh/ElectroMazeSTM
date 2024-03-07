@@ -15,15 +15,17 @@
 #include <string.h>
 #include "serial.h"
 
-void SensorInit(void);
+void sensorInit(void);
 
 void SensorThreadInit(void);
 
 msg_t SensorGetData(int16_t (*data)[3], uint16_t tim_ms);
 
-int8_t SensorCheckWhoAmI(void);
+int8_t sensorCheckWhoAmI(void);
 
-int8_t SensorConfigure(void);
+int8_t sensorConfigure(void);
+
+void sensorCalibrate(float *calibrationData);
 
 i2cflags_t SensorGetErrors(void);
 

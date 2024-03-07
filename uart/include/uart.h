@@ -18,7 +18,7 @@
 
 void uartWorker(void *arg);
 
-void uartInit(void);
+void uartThreadInit(void);
 
 
 msg_t uartPut(uint8_t byte);

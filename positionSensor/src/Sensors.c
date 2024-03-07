@@ -31,19 +31,28 @@ static const I2CConfig i2c1_conf = {
 };
 
 
-
-//TODO() откалибровать компас
-const float compassCalibrationBias[3] = { 567.893, -825.35, 1061.436 };
-
-const float compassCalibrationMatrix[3][3] = { { 1.909, 0.082, 0.004 }, { 0.049, 1.942, -0.235 }, { -0.003, 0.008, 1.944 } };
-
-
-void SensorInit(void){
+void sensorInit(void){
 	i2cStart(i2c1, &i2c1_conf);
 	palSetLineMode(PAL_LINE(GPIOB, 8), PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN );
 	palSetLineMode(PAL_LINE(GPIOB, 9), PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN );
 }
 
+void sensorCalibrate(float *calibrationData){
+
+	int16_t sensorData[3][3] = {0};
+	uint16_t count = 2000;
+	for (uint16_t i = 0;i<count; i++) {
+		SensorGetData(sensorData, 1000);
+		calibrationData[0] += ((float)sensorData[1][0])/count;
+		calibrationData[1] += ((float)sensorData[1][1])/count;
+		calibrationData[2] += ((float)sensorData[1][2])/count;
+		chThdSleepMilliseconds(5);
+	}
+	dbgprintf("calibration 4000 times:%.4f %.4f %.4f\r\n",calibrationData[0],calibrationData[1],calibrationData[2]);
+	/*calibrationData[0] = 0;
+	calibrationData[1] = 0;
+	calibrationData[2] = 0;*/
+}
 
 msg_t SensorGetData(int16_t (*data)[3], uint16_t tim_ms){
 	msg_t msg = 0;
@@ -68,7 +77,7 @@ msg_t SensorGetData(int16_t (*data)[3], uint16_t tim_ms){
 
 }
 
-int8_t SensorCheckWhoAmI(void){
+int8_t sensorCheckWhoAmI(void){
 	uint8_t rx[1]={0};
 	uint8_t tx[] = {accelerometer.whoAmIAddress};
 	int8_t err = i2cMasterTransmitTimeout(i2c1,accelerometer.address,tx,1,rx,1,1000);
@@ -84,7 +93,7 @@ int8_t SensorCheckWhoAmI(void){
 
 
 }
-int8_t SensorConfigure(void){
+int8_t sensorConfigure(void){
 
 	msg_t res;
 	//Акселерометр

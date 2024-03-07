@@ -11,23 +11,14 @@
 #include "stdbool.h"
 #include "hal.h"
 #include "serial.h"
-#define  X_ENGINE 1
-#define  Y_ENGINE 2
-#define STOP_X() stop(X_ENGINE);
-#define STOP_Y() stop(X_ENGINE);
 
-#define SET_X(isUP,dutyCycle) set(X_ENGINE, isUP, dutyCycle);
-#define SET_Y(isUP,dutyCycle) set(Y_ENGINE, isUP, dutyCycle);
+void stopEngines(void);//Остановка двигателя
 
-#define INIT_X init(X_ENGINE);
-#define INIT_Y init(Y_ENGINE);
+void setEnginesSpeed(int32_t signalX,int32_t signalY);//dutyCycle делится на 10000
 
+void initEngines(void);
 
-void stop(uint8_t engine);//Остановка двигателя
-
-void set(uint8_t engine,bool isUp, uint16_t dutyCycle);//dutyCycle делится на 10000
-
-void init(uint8_t engine);
+void enginesTest(void);
 
 
 #endif /* ENGINE_INCLUDE_ENGINE_H_ */

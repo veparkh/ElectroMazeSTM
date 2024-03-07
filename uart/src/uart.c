@@ -8,7 +8,7 @@
 
 MUTEX_DECL(targetPositionMutex);
 float targetPositionArray[2]={0};
-THD_WORKING_AREA(uartWotkingArea, 800);
+THD_WORKING_AREA(uartWotkingArea, 1024);
 
 static SerialDriver *sd = &SD4;
 
@@ -30,33 +30,33 @@ THD_FUNCTION(uartWorker, arq){
 	uint8_t query[100];
 	dbgprintf("hello\r\n");
     while (true) {
+    	chThdSleepMilliseconds(20);
     	chMtxLock(&targetPositionMutex);
     	memset((uint8_t*)targetPositionArray,0,8);
     	chMtxUnlock(&targetPositionMutex);
     	size_t readByteCount = uartReadTimeout(query, 100, 0);
 		dbgprintf(" clear bytecount = %d\r\n",readByteCount);
     	readByteCount = uartRead(query, 3);
-    	dbgprintf("%d %d %d bytecount = %d\r\n",query[0],query[1],query[2], readByteCount);
+    	//dbgprintf("%d %d %d bytecount = %d\r\n",query[0],query[1],query[2], readByteCount);
     	if(query[0]!=queryBytes[0] || query[1]!=queryBytes[1] || query[2]!=queryBytes[2]){
     		continue;
     	}
 
     	msg_t res = uartWrite(password, 3);
-    	dbgprintf("res: %d\r\n", res);
     	if(res!=3)
     		continue;
     	float positions[2]={0x0fffffff,-90.0};
     	while (true){
     		readByteCount = uartReadTimeout((uint8_t*)positions, 8, 2000);
-    		dbgprintf("readBytes:%d\r\n",readByteCount);
+    		//dbgprintf("readBytes:%d\r\n",readByteCount);
     		if (readByteCount!=8)
     			break;
     		res = uartWrite(positionAnswer, 3);
-    		dbgprintf("res %d\r\n", res);
+    		//dbgprintf("res %d\r\n", res);
     		if (res!=3)
     			break;
     		if (positions[0]==targetPositionArray[0] && positions[0]==targetPositionArray[0]){
-    			dbgprintf("same\r\n");
+    			//dbgprintf("same\r\n");
     			chThdSleepMilliseconds(10);
     			continue;
     		}
@@ -65,7 +65,7 @@ THD_FUNCTION(uartWorker, arq){
     			chMtxUnlock(&targetPositionMutex);
     			chThdSleepMilliseconds(10);
     		}
-    		dbgprintf("position:%f   %f\r\n",positions[0], positions[1]);
+    		//dbgprintf("position:%f   %f\r\n",positions[0], positions[1]);
     	}
     }
 }
@@ -74,8 +74,8 @@ THD_FUNCTION(uartWorker, arq){
 
 
 
-void uartInit(void){
-	chThdCreateStatic(uartWotkingArea,2048, NORMALPRIO+1, uartWorker, NULL);
+void uartThreadInit(void){
+	chThdCreateStatic(uartWotkingArea,1024, NORMALPRIO, uartWorker, NULL);
 
 
 

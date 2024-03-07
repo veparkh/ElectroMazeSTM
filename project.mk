@@ -1,5 +1,6 @@
 # C source files
 PROJECT_CSRC 	= main.c\
+				src/maze.c\
 				src/serial.c\
 				engine/src/engine.c\
 				uart/src/uart.c\
@@ -13,9 +14,9 @@ PROJECT_CSRC 	= main.c\
 PROJECT_CPPSRC 	= 
 # Directories to search headers in
 PROJECT_INCDIR	= include\
-					    engine/include\
-				      uart\include\
-				      positionSensor\include
+				engine/include\
+				uart\include\
+				positionSensor\include
 
 # Additional libraries
 PROJECT_LIBS	=
