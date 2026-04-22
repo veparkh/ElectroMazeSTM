@@ -10,6 +10,10 @@
   <img alt="GCC ARM" src="https://img.shields.io/badge/GCC%20arm--none--eabi-333?style=flat">
 </p>
 
+<p align="center">
+  <img width="600" alt="Physical tilt-stage rig" src="https://github.com/user-attachments/assets/72a2bfaa-150c-439d-add1-8218a801faf1">
+</p>
+
 ---
 
 > Part of a 3-repo thesis project alongside **[ElectroMazeCV](https://github.com/veparkh/ElectroMazeCV)** (vision & control software) and **[ElectroMaze](https://github.com/veparkh/ElectroMaze)** (Android app).
